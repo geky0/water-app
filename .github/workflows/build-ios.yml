@@ -23,27 +23,29 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
-
-      - name: Setup CocoaPods
-        run: |
-          sudo gem install cocoapods
+        run: npm install
 
       - name: Prebuild Native iOS Project
         run: npx expo prebuild --platform ios --clean
 
-      - name: Set up CocoaPods in iOS directory
+      - name: Install CocoaPods
         working-directory: ios
         run: pod install
+
+      - name: List Xcode Schemes
+        working-directory: ios
+        run: xcodebuild -list
 
       - name: Build Xcode Archive
         working-directory: ios
         run: |
-          xcodebuild -workspace HydroDark.xcworkspace \
-            -scheme HydroDark \
+          SCHEME_NAME=$(xcodebuild -list -json | python3 -c "import sys, json; print(json.load(sys.stdin)['workspace']['schemes'][0])")
+          echo "Building scheme: $SCHEME_NAME"
+          xcodebuild -workspace "${SCHEME_NAME}.xcworkspace" \
+            -scheme "$SCHEME_NAME" \
             -configuration Release \
             -destination 'generic/platform=iOS' \
-            -archivePath HydroDark.xcarchive \
+            -archivePath "build/${SCHEME_NAME}.xcarchive" \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
@@ -52,11 +54,13 @@ jobs:
       - name: Package IPA
         working-directory: ios
         run: |
+          SCHEME_NAME=$(xcodebuild -list -json | python3 -c "import sys, json; print(json.load(sys.stdin)['workspace']['schemes'][0])")
           mkdir -p Payload
-          cp -r HydroDark.xcarchive/Products/Applications/HydroDark.app Payload/
-          zip -r HydroDark.ipa Payload
+          APP_PATH=$(find "build/${SCHEME_NAME}.xcarchive/Products/Applications" -name "*.app" -maxdepth 1)
+          cp -r "$APP_PATH" Payload/
+          zip -r "HydroDark.ipa" Payload
           mkdir -p ../build-output
-          mv HydroDark.ipa ../build-output/
+          mv "HydroDark.ipa" ../build-output/
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
@@ -64,3 +68,4 @@ jobs:
           name: HydroDark-iOS-IPA
           path: build-output/HydroDark.ipa
           retention-days: 14
+
