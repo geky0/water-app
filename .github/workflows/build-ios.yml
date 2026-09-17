@@ -36,20 +36,14 @@ jobs:
           python3 -c "
           p = 'node_modules/expo-modules-jsi/apple/Sources/ExpoModulesJSI-Cxx/include/RuntimeScheduler.h'
           with open(p, 'r') as f:
-              content = f.read()
-          # Forward-declare class and retain/release functions before class definition
-          fwd = '''namespace expo {
-          class RuntimeScheduler;
-          void retainRuntimeScheduler(RuntimeScheduler *scheduler);
-          void releaseRuntimeScheduler(RuntimeScheduler *scheduler);
-          }
-          inline void retainRuntimeScheduler(expo::RuntimeScheduler *scheduler);
-          inline void releaseRuntimeScheduler(expo::RuntimeScheduler *scheduler);
-          '''
-          content = content.replace('namespace expo {', fwd + '\nnamespace expo {', 1)
+              c = f.read()
+          c = c.replace('SWIFT_RETURNS_RETAINED ', '')
+          c = c.replace('} SWIFT_SHARED_REFERENCE(retainRuntimeScheduler, releaseRuntimeScheduler);', '} SWIFT_IMMORTAL_REFERENCE;')
           with open(p, 'w') as f:
-              f.write(content)
+              f.write(c)
           "
+          echo "=== Patched RuntimeScheduler.h ==="
+          tail -n 30 node_modules/expo-modules-jsi/apple/Sources/ExpoModulesJSI-Cxx/include/RuntimeScheduler.h
 
       - name: Prebuild Native iOS Project
         run: npx expo prebuild --platform ios --clean
