@@ -30,6 +30,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Patch ExpoModulesJSI Swift tools version
+        run: |
+          sed -i '' 's/swift-tools-version: 6.2/swift-tools-version: 6.0/g' node_modules/expo-modules-jsi/apple/Package.swift || true
+          head -n 5 node_modules/expo-modules-jsi/apple/Package.swift
+
       - name: Prebuild Native iOS Project
         run: npx expo prebuild --platform ios --clean
 
