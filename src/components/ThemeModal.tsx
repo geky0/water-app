@@ -459,6 +459,23 @@ export const ThemeModal: React.FC<ThemeModalProps> = ({ visible, onClose }) => {
                     style={[
                       styles.sourceBtn,
                       {
+                        borderColor: '#3c94fc',
+                        backgroundColor: 'rgba(60, 148, 252, 0.12)',
+                      },
+                    ]}
+                    onPress={() => UpdateService.openKSignSource()}
+                    activeOpacity={0.8}
+                  >
+                    <Sparkles size={14} color="#3c94fc" />
+                    <Text style={[styles.sourceBtnText, { color: '#3c94fc' }]}>
+                      + Add to KSign (Repo / Source)
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[
+                      styles.sourceBtn,
+                      {
                         borderColor: colors.primary,
                         backgroundColor: colors.cardBadgeBg,
                       },
@@ -468,7 +485,7 @@ export const ThemeModal: React.FC<ThemeModalProps> = ({ visible, onClose }) => {
                   >
                     <Sparkles size={14} color={colors.primary} />
                     <Text style={[styles.sourceBtnText, { color: colors.primary }]}>
-                      + Add AltStore Source (Auto-Updates)
+                      + Add to AltStore / SideStore
                     </Text>
                   </TouchableOpacity>
 

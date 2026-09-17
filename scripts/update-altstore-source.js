@@ -5,7 +5,7 @@ const appJson = require('../app.json');
 const version = appJson.expo.version || '1.1.0';
 const versionDate = new Date().toISOString().split('T')[0];
 
-const files = ['altstore.json', 'apps.json'];
+const files = ['altstore.json', 'apps.json', 'repo.json'];
 
 files.forEach(file => {
   const filePath = path.join(__dirname, '..', file);

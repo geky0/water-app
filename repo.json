@@ -1,0 +1,38 @@
+{
+  "name": "DaMurxy's App Repo",
+  "identifier": "com.damurxy.apps.source",
+  "subtitle": "HydroDark and iOS Apps",
+  "description": "Personal sideloading source for HydroDark and utilities",
+  "iconURL": "https://raw.githubusercontent.com/geky0/water-app/main/assets/icon-stealth.png",
+  "website": "https://github.com/geky0/water-app",
+  "tintColor": "FF2A4D",
+  "apps": [
+    {
+      "name": "HydroDark",
+      "bundleIdentifier": "com.damurxy.hydrodark",
+      "developerName": "HydroDark",
+      "version": "1.1.0",
+      "versionDate": "2026-09-17",
+      "versionDescription": "Added Stealth Monochrome (all black & gray) theme, multiple selectable app icons, hydration ring center symbols, and auto-update links.",
+      "downloadURL": "https://github.com/geky0/water-app/releases/download/v1.1.0/HydroDark.ipa",
+      "localizedDescription": "HydroDark is an OLED dark-aesthetic hydration tracking app with customizable app launcher icons and hydration goals.",
+      "iconURL": "https://raw.githubusercontent.com/geky0/water-app/main/assets/icon-stealth.png",
+      "tintColor": "FF2A4D",
+      "size": 17618640
+    },
+    {
+      "name": "Ksign",
+      "bundleIdentifier": "nya.asami.ksign",
+      "developerName": "Nagata Asami",
+      "version": "1.6",
+      "versionDate": "2026-05-25",
+      "versionDescription": "Optimization for iOS 26, bulk installation support for multiple apps, custom injection path, tweak support, and bug fixes.",
+      "downloadURL": "https://github.com/Nyasami/Ksign/releases/download/v1.6/Ksign.ipa",
+      "localizedDescription": "On-device IPA codesigning and sideloading tool for iOS. Sign and install IPAs directly on your iPhone without needing a computer.",
+      "iconURL": "https://raw.githubusercontent.com/Nyasami/Ksign/v1.5/Ksign/Resources/Assets.xcassets/AppIcon.appiconset/Ksign-default.png",
+      "tintColor": "3c94fc",
+      "size": 16394645
+    }
+  ],
+  "news": []
+}

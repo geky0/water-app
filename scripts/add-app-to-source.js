@@ -50,7 +50,7 @@ const appEntry = {
   size: parseInt(args.size, 10) || 15000000
 };
 
-const sourceFiles = ['altstore.json', 'apps.json'];
+const sourceFiles = ['altstore.json', 'apps.json', 'repo.json'];
 
 sourceFiles.forEach(file => {
   const filePath = path.join(__dirname, '..', file);
@@ -72,15 +72,15 @@ sourceFiles.forEach(file => {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + '\n');
 });
 
-console.log(`\nSuccessfully saved to altstore.json and apps.json!`);
+console.log(`\nSuccessfully saved to altstore.json, apps.json, and repo.json!`);
 
 if (args.push) {
   try {
     console.log('\nCommitting and pushing to git...');
-    execSync(`git add altstore.json apps.json`, { stdio: 'inherit' });
-    execSync(`git commit -m "repo: add/update ${appEntry.name} in AltStore source [skip ci]"`, { stdio: 'inherit' });
+    execSync(`git add altstore.json apps.json repo.json`, { stdio: 'inherit' });
+    execSync(`git commit -m "repo: add/update ${appEntry.name} in source [skip ci]"`, { stdio: 'inherit' });
     execSync(`git push origin main`, { stdio: 'inherit' });
-    console.log(`Pushed to GitHub! AltStore source will reflect changes immediately.`);
+    console.log(`Pushed to GitHub! Sideload sources will reflect changes immediately.`);
   } catch (err) {
     console.error('Git push failed:', err.message);
   }

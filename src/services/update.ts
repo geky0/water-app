@@ -17,6 +17,9 @@ const GITHUB_REPO = 'geky0/water-app';
 export const CURRENT_VERSION = appConfig.expo.version || '1.0.0';
 export const ALTSTORE_SOURCE_RAW_URL = `https://raw.githubusercontent.com/${GITHUB_REPO}/main/altstore.json`;
 export const ALTSTORE_ADD_SOURCE_URL = `altstore://source?url=${encodeURIComponent(ALTSTORE_SOURCE_RAW_URL)}`;
+export const KSIGN_REPO_URL = `https://raw.githubusercontent.com/${GITHUB_REPO}/main/repo.json`;
+export const KSIGN_ADD_SOURCE_URL = `ksign://source/${KSIGN_REPO_URL}`;
+export const KSIGN_INSTALL_URL = `ksign://install/https://github.com/${GITHUB_REPO}/releases/latest/download/HydroDark.ipa`;
 
 export const UpdateService = {
   async checkForUpdate(): Promise<UpdateInfo> {
@@ -122,6 +125,32 @@ export const UpdateService = {
       }
     } catch (e) {
       await Linking.openURL(ALTSTORE_SOURCE_RAW_URL);
+    }
+  },
+
+  async openKSignSource(): Promise<void> {
+    try {
+      const canOpen = await Linking.canOpenURL('ksign://');
+      if (canOpen) {
+        await Linking.openURL(KSIGN_ADD_SOURCE_URL);
+      } else {
+        await Linking.openURL(KSIGN_REPO_URL);
+      }
+    } catch (e) {
+      await Linking.openURL(KSIGN_REPO_URL);
+    }
+  },
+
+  async openKSignInstall(): Promise<void> {
+    try {
+      const canOpen = await Linking.canOpenURL('ksign://');
+      if (canOpen) {
+        await Linking.openURL(KSIGN_INSTALL_URL);
+      } else {
+        await Linking.openURL('https://github.com/geky0/water-app/releases/latest/download/HydroDark.ipa');
+      }
+    } catch (e) {
+      await Linking.openURL('https://github.com/geky0/water-app/releases/latest/download/HydroDark.ipa');
     }
   },
 };
