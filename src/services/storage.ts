@@ -1,10 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DrinkLog, ReminderConfig, UserStats } from '../types';
+import { ThemeId } from '../theme/themes';
 
 const STORAGE_KEYS = {
   LOGS_PREFIX: '@hydro_logs_',
   STATS: '@hydro_stats',
   REMINDERS: '@hydro_reminders',
+  THEME: '@hydro_theme_id',
+  RING_ICON: '@hydro_ring_icon',
+  APP_ICON: '@hydro_app_icon',
 };
 
 export const getTodayKey = (): string => {
@@ -104,6 +108,62 @@ export const StorageService = {
       await AsyncStorage.setItem(STORAGE_KEYS.REMINDERS, JSON.stringify(config));
     } catch (error) {
       console.error('Error saving reminder config:', error);
+    }
+  },
+
+  async getThemeId(): Promise<ThemeId> {
+    try {
+      const data = await AsyncStorage.getItem(STORAGE_KEYS.THEME);
+      if (data && (data === 'monochrome' || data === 'crimson' || data === 'frost')) {
+        return data as ThemeId;
+      }
+    } catch (e) {
+      console.error('Error reading theme:', e);
+    }
+    return 'monochrome';
+  },
+
+  async saveThemeId(themeId: ThemeId): Promise<void> {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.THEME, themeId);
+    } catch (e) {
+      console.error('Error saving theme:', e);
+    }
+  },
+
+  async getRingIcon(): Promise<string> {
+    try {
+      const data = await AsyncStorage.getItem(STORAGE_KEYS.RING_ICON);
+      if (data) return data;
+    } catch (e) {
+      console.error('Error reading ring icon:', e);
+    }
+    return 'droplet';
+  },
+
+  async saveRingIcon(icon: string): Promise<void> {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.RING_ICON, icon);
+    } catch (e) {
+      console.error('Error saving ring icon:', e);
+    }
+  },
+
+  async getAppIcon(): Promise<string> {
+    try {
+      const data = await AsyncStorage.getItem(STORAGE_KEYS.APP_ICON);
+      if (data) return data;
+    } catch (e) {
+      console.error('Error reading app icon:', e);
+    }
+    return 'Default';
+  },
+
+  async saveAppIcon(icon: string): Promise<void> {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.APP_ICON, icon);
+    } catch (e) {
+      console.error('Error saving app icon:', e);
     }
   },
 };

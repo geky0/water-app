@@ -11,6 +11,8 @@ jobs:
   build-ipa:
     name: Build iOS IPA
     runs-on: macos-15
+    permissions:
+      contents: write
 
     steps:
       - name: Select Xcode 26.2
@@ -73,4 +75,23 @@ jobs:
           name: HydroDark-iOS-IPA
           path: build-output/HydroDark.ipa
           retention-days: 14
+
+      - name: Create or Update GitHub Release
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.1.0
+          name: HydroDark v1.1.0 (iOS IPA)
+          body: |
+            ## HydroDark v1.1.0
+            - 🖤 **Stealth Monochrome Theme**: All-black OLED & gray accents.
+            - 🎨 **Multiple App Icons**: Stealth, Crimson, Frost, and Slate home screen icons.
+            - 💧 **Custom Ring Center Icons**: Droplet, Flame, Energy, Glass, and Defense.
+            - 🔄 **Quick In-App Updates**: Tap to download and install newer builds directly on iPhone.
+            
+            ### Download
+            Download `HydroDark.ipa` below to install via TrollStore, AltStore, Sideloadly, or Scarlet.
+          files: build-output/HydroDark.ipa
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

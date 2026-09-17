@@ -81,16 +81,18 @@ async function main() {
     process.exit(1);
   }
 
-  console.log('Creating GitHub Release v1.0.0...');
+  const appJson = require('../app.json');
+  const tag = process.env.TAG_NAME || ('v' + (appJson.expo?.version || '1.1.0'));
+  console.log(`Creating GitHub Release ${tag}...`);
   const releaseRes = await request({
     path: '/repos/geky0/water-app/releases',
     method: 'POST',
     headers: { 'Content-Type': 'application/json' }
   }, JSON.stringify({
-    tag_name: 'v1.0.0',
+    tag_name: tag,
     target_commitish: 'main',
-    name: 'HydroDark v1.0.0 (iOS IPA)',
-    body: 'iOS IPA build for HydroDark.\n\nDownload `HydroDark.ipa` below to install or test on iOS.',
+    name: `HydroDark ${tag} (iOS IPA)`,
+    body: `iOS IPA build for HydroDark ${tag}.\n\nDownload \`HydroDark.ipa\` below to install or test on iOS.`,
     draft: false,
     prerelease: false
   }));
@@ -99,8 +101,8 @@ async function main() {
   let release = releaseRes.data;
 
   if (releaseRes.status === 422 && release.errors) {
-    console.log('Release may already exist, fetching latest release...');
-    const existing = await request({ path: '/repos/geky0/water-app/releases/tags/v1.0.0' });
+    console.log('Release may already exist, fetching existing release...');
+    const existing = await request({ path: `/repos/geky0/water-app/releases/tags/${tag}` });
     release = existing.data;
   }
 

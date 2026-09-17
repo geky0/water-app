@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Trash2, Clock } from 'lucide-react-native';
 import { DrinkLog } from '../types';
-import { Colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
 
 interface TodayLogProps {
   logs: DrinkLog[];
@@ -10,6 +10,8 @@ interface TodayLogProps {
 }
 
 export const TodayLog: React.FC<TodayLogProps> = ({ logs, onDelete }) => {
+  const { colors } = useTheme();
+
   const formatTime = (timestamp: number) => {
     const d = new Date(timestamp);
     let hours = d.getHours();
@@ -22,10 +24,24 @@ export const TodayLog: React.FC<TodayLogProps> = ({ logs, onDelete }) => {
   if (logs.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.sectionTitle}>TODAY'S ACTIVITY</Text>
-        <View style={styles.emptyCard}>
-          <Text style={styles.emptyText}>No water logged yet today.</Text>
-          <Text style={styles.emptySubtext}>Tap a button above to record your intake.</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+          TODAY'S ACTIVITY
+        </Text>
+        <View
+          style={[
+            styles.emptyCard,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.surfaceBorder,
+            },
+          ]}
+        >
+          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+            No water logged yet today.
+          </Text>
+          <Text style={[styles.emptySubtext, { color: colors.textMuted }]}>
+            Tap a button above to record your intake.
+          </Text>
         </View>
       </View>
     );
@@ -34,20 +50,37 @@ export const TodayLog: React.FC<TodayLogProps> = ({ logs, onDelete }) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
-        <Text style={styles.sectionTitle}>TODAY'S ACTIVITY</Text>
-        <Text style={styles.countBadge}>{logs.length} entries</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+          TODAY'S ACTIVITY
+        </Text>
+        <Text style={[styles.countBadge, { color: colors.textMuted }]}>
+          {logs.length} entries
+        </Text>
       </View>
 
       <View style={styles.listWrapper}>
         {logs.map((item) => (
-          <View key={item.id} style={styles.logCard}>
+          <View
+            key={item.id}
+            style={[
+              styles.logCard,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.surfaceBorder,
+              },
+            ]}
+          >
             <View style={styles.leftInfo}>
-              <View style={styles.dotIndicator} />
+              <View style={[styles.dotIndicator, { backgroundColor: colors.primary }]} />
               <View>
-                <Text style={styles.amountText}>+{item.amount} ml</Text>
+                <Text style={[styles.amountText, { color: colors.textPrimary }]}>
+                  +{item.amount} ml
+                </Text>
                 <View style={styles.timeRow}>
-                  <Clock size={12} color={Colors.textMuted} />
-                  <Text style={styles.timeText}>{formatTime(item.timestamp)}</Text>
+                  <Clock size={12} color={colors.textMuted} />
+                  <Text style={[styles.timeText, { color: colors.textMuted }]}>
+                    {formatTime(item.timestamp)}
+                  </Text>
                 </View>
               </View>
             </View>
@@ -57,7 +90,7 @@ export const TodayLog: React.FC<TodayLogProps> = ({ logs, onDelete }) => {
               onPress={() => onDelete(item.id)}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <Trash2 size={16} color={Colors.textMuted} />
+              <Trash2 size={16} color={colors.textMuted} />
             </TouchableOpacity>
           </View>
         ))}
@@ -84,39 +117,32 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     letterSpacing: 2,
-    color: Colors.textSecondary,
     marginLeft: 4,
     marginBottom: 8,
   },
   countBadge: {
     fontSize: 12,
-    color: Colors.textMuted,
     fontWeight: '500',
   },
   emptyCard: {
-    backgroundColor: Colors.surface,
     padding: 24,
     borderRadius: 16,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.surfaceBorder,
     borderStyle: 'dashed',
   },
   emptyText: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.textSecondary,
     marginBottom: 4,
   },
   emptySubtext: {
     fontSize: 12,
-    color: Colors.textMuted,
   },
   listWrapper: {
     gap: 8,
   },
   logCard: {
-    backgroundColor: Colors.surface,
     borderRadius: 14,
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -124,7 +150,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: Colors.surfaceBorder,
   },
   leftInfo: {
     flexDirection: 'row',
@@ -135,12 +160,10 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: Colors.primary,
   },
   amountText: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.textPrimary,
   },
   timeRow: {
     flexDirection: 'row',
@@ -150,7 +173,6 @@ const styles = StyleSheet.create({
   },
   timeText: {
     fontSize: 12,
-    color: Colors.textMuted,
   },
   deleteBtn: {
     padding: 6,

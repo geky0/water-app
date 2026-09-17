@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, TextInput } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Plus, Coffee, GlassWater, Flame } from 'lucide-react-native';
-import { Colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
 
 interface QuickAddButtonsProps {
   onAdd: (amount: number) => void;
@@ -15,11 +15,12 @@ const PRESETS = [
   { amount: 750, label: 'Flask', icon: Flame },
 ];
 
-function DropletSmall() {
-  return <GlassWater size={18} color={Colors.primary} />;
+function DropletSmall({ color }: { color: string }) {
+  return <GlassWater size={18} color={color} />;
 }
 
 export const QuickAddButtons: React.FC<QuickAddButtonsProps> = ({ onAdd }) => {
+  const { colors, themeId } = useTheme();
   const [customVisible, setCustomVisible] = useState(false);
   const [customVal, setCustomVal] = useState('');
 
@@ -39,41 +40,55 @@ export const QuickAddButtons: React.FC<QuickAddButtonsProps> = ({ onAdd }) => {
     }
   };
 
+  const confirmTextColor = themeId === 'monochrome' ? '#000000' : '#FFFFFF';
+
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>QUICK LOG</Text>
-      
+      <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>QUICK LOG</Text>
+
       <View style={styles.buttonRow}>
         {PRESETS.map((item) => {
           const Icon = item.icon;
           return (
             <TouchableOpacity
               key={item.amount}
-              style={styles.presetButton}
+              style={[
+                styles.presetButton,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.surfaceBorder,
+                },
+              ]}
               activeOpacity={0.7}
               onPress={() => handlePress(item.amount)}
             >
-              <View style={styles.iconWrapper}>
-                <Icon size={18} color={Colors.primary} />
+              <View style={[styles.iconWrapper, { backgroundColor: colors.cardBadgeBg }]}>
+                <Icon size={18} color={colors.primary} />
               </View>
-              <Text style={styles.amountText}>+{item.amount}</Text>
-              <Text style={styles.unitText}>ml</Text>
-              <Text style={styles.labelText}>{item.label}</Text>
+              <Text style={[styles.amountText, { color: colors.primary }]}>+{item.amount}</Text>
+              <Text style={[styles.unitText, { color: colors.textMuted }]}>ml</Text>
+              <Text style={[styles.labelText, { color: colors.textSecondary }]}>{item.label}</Text>
             </TouchableOpacity>
           );
         })}
 
         <TouchableOpacity
-          style={[styles.presetButton, styles.customButton]}
+          style={[
+            styles.presetButton,
+            {
+              backgroundColor: colors.surfaceLight,
+              borderColor: colors.cardBadgeBorder,
+            },
+          ]}
           activeOpacity={0.7}
           onPress={() => setCustomVisible(true)}
         >
-          <View style={[styles.iconWrapper, styles.customIconWrapper]}>
-            <Plus size={20} color={Colors.textPrimary} />
+          <View style={[styles.iconWrapper, { backgroundColor: colors.cardBadgeBg }]}>
+            <Plus size={20} color={colors.textPrimary} />
           </View>
-          <Text style={[styles.amountText, { color: Colors.textPrimary }]}>Custom</Text>
-          <Text style={styles.unitText}>amount</Text>
-          <Text style={styles.labelText}>Special</Text>
+          <Text style={[styles.amountText, { color: colors.textPrimary }]}>Custom</Text>
+          <Text style={[styles.unitText, { color: colors.textMuted }]}>amount</Text>
+          <Text style={[styles.labelText, { color: colors.textSecondary }]}>Special</Text>
         </TouchableOpacity>
       </View>
 
@@ -85,35 +100,53 @@ export const QuickAddButtons: React.FC<QuickAddButtonsProps> = ({ onAdd }) => {
         onRequestClose={() => setCustomVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>LOG WATER</Text>
-            <Text style={styles.modalSubtitle}>Enter intake amount in milliliters</Text>
+          <View
+            style={[
+              styles.modalCard,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.surfaceBorder,
+              },
+            ]}
+          >
+            <Text style={[styles.modalTitle, { color: colors.primary }]}>LOG WATER</Text>
+            <Text style={[styles.modalSubtitle, { color: colors.textSecondary }]}>
+              Enter intake amount in milliliters
+            </Text>
 
-            <View style={styles.inputContainer}>
+            <View
+              style={[
+                styles.inputContainer,
+                {
+                  backgroundColor: colors.background,
+                  borderColor: colors.surfaceBorder,
+                },
+              ]}
+            >
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: colors.textPrimary }]}
                 placeholder="300"
-                placeholderTextColor={Colors.textMuted}
+                placeholderTextColor={colors.textMuted}
                 keyboardType="numeric"
                 value={customVal}
                 onChangeText={setCustomVal}
                 autoFocus
               />
-              <Text style={styles.inputUnit}>ml</Text>
+              <Text style={[styles.inputUnit, { color: colors.textSecondary }]}>ml</Text>
             </View>
 
             <View style={styles.modalActions}>
               <TouchableOpacity
-                style={styles.cancelBtn}
+                style={[styles.cancelBtn, { backgroundColor: colors.surfaceLight }]}
                 onPress={() => setCustomVisible(false)}
               >
-                <Text style={styles.cancelText}>Cancel</Text>
+                <Text style={[styles.cancelText, { color: colors.textSecondary }]}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.confirmBtn}
+                style={[styles.confirmBtn, { backgroundColor: colors.primary }]}
                 onPress={handleCustomSubmit}
               >
-                <Text style={styles.confirmText}>Add Log</Text>
+                <Text style={[styles.confirmText, { color: confirmTextColor }]}>Add Log</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -131,7 +164,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     letterSpacing: 2,
-    color: Colors.textSecondary,
     marginBottom: 12,
     marginLeft: 4,
   },
@@ -142,42 +174,29 @@ const styles = StyleSheet.create({
   presetButton: {
     flex: 1,
     marginHorizontal: 3,
-    backgroundColor: Colors.surface,
     paddingVertical: 14,
     borderRadius: 14,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.surfaceBorder,
-  },
-  customButton: {
-    backgroundColor: Colors.surfaceLight,
-    borderColor: '#38161D',
   },
   iconWrapper: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: 'rgba(255, 30, 68, 0.1)',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 6,
   },
-  customIconWrapper: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  },
   amountText: {
     fontSize: 14,
     fontWeight: '800',
-    color: Colors.primary,
   },
   unitText: {
     fontSize: 10,
-    color: Colors.textMuted,
     marginTop: -2,
   },
   labelText: {
     fontSize: 11,
-    color: Colors.textSecondary,
     marginTop: 4,
   },
   modalOverlay: {
@@ -190,32 +209,26 @@ const styles = StyleSheet.create({
   modalCard: {
     width: '100%',
     maxWidth: 340,
-    backgroundColor: Colors.surface,
     borderRadius: 20,
     padding: 24,
     borderWidth: 1,
-    borderColor: Colors.surfaceBorder,
     alignItems: 'center',
   },
   modalTitle: {
     fontSize: 16,
     fontWeight: '800',
     letterSpacing: 2,
-    color: Colors.primary,
     marginBottom: 4,
   },
   modalSubtitle: {
     fontSize: 13,
-    color: Colors.textSecondary,
     marginBottom: 20,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: Colors.surfaceBorder,
     paddingHorizontal: 16,
     width: '100%',
     marginBottom: 24,
@@ -225,12 +238,10 @@ const styles = StyleSheet.create({
     height: 52,
     fontSize: 24,
     fontWeight: '700',
-    color: Colors.textPrimary,
   },
   inputUnit: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.textSecondary,
   },
   modalActions: {
     flexDirection: 'row',
@@ -241,11 +252,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 14,
     borderRadius: 12,
-    backgroundColor: Colors.surfaceLight,
     alignItems: 'center',
   },
   cancelText: {
-    color: Colors.textSecondary,
     fontWeight: '600',
     fontSize: 14,
   },
@@ -253,12 +262,10 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 14,
     borderRadius: 12,
-    backgroundColor: Colors.primary,
     alignItems: 'center',
   },
   confirmText: {
-    color: '#FFF',
-    fontWeight: '700',
+    fontWeight: '800',
     fontSize: 14,
   },
 });

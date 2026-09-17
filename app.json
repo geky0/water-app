@@ -2,7 +2,7 @@
   "expo": {
     "name": "HydroDark",
     "slug": "hydro-dark",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -30,6 +30,43 @@
           "icon": "./assets/icon.png",
           "color": "#FF2A4D"
         }
+      ],
+      [
+        "expo-alternate-app-icons",
+        [
+          {
+            "name": "Stealth",
+            "ios": "./assets/icon-stealth.png",
+            "android": {
+              "foregroundImage": "./assets/icon-stealth.png",
+              "backgroundColor": "#000000"
+            }
+          },
+          {
+            "name": "Crimson",
+            "ios": "./assets/icon-crimson.png",
+            "android": {
+              "foregroundImage": "./assets/icon-crimson.png",
+              "backgroundColor": "#0A0A0C"
+            }
+          },
+          {
+            "name": "Frost",
+            "ios": "./assets/icon-frost.png",
+            "android": {
+              "foregroundImage": "./assets/icon-frost.png",
+              "backgroundColor": "#050B14"
+            }
+          },
+          {
+            "name": "Slate",
+            "ios": "./assets/icon-slate.png",
+            "android": {
+              "foregroundImage": "./assets/icon-slate.png",
+              "backgroundColor": "#121212"
+            }
+          }
+        ]
       ]
     ],
     "web": {

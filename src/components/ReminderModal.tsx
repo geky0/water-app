@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, Switch } from 'react-native';
-import { Bell, BellOff, X, Check, Zap } from 'lucide-react-native';
-import { Colors } from '../theme/colors';
+import { Bell, X, Check, Zap } from 'lucide-react-native';
 import { ReminderConfig } from '../types';
+import { useTheme } from '../theme/ThemeContext';
 
 interface ReminderModalProps {
   visible: boolean;
@@ -28,6 +28,7 @@ export const ReminderModal: React.FC<ReminderModalProps> = ({
   onSave,
   onTestNotification,
 }) => {
+  const { colors, themeId } = useTheme();
   const [enabled, setEnabled] = useState(config.enabled);
   const [intervalMinutes, setIntervalMinutes] = useState(config.intervalMinutes);
 
@@ -40,6 +41,8 @@ export const ReminderModal: React.FC<ReminderModalProps> = ({
     onClose();
   };
 
+  const saveBtnTextColor = themeId === 'monochrome' ? '#000000' : '#FFFFFF';
+
   return (
     <Modal
       visible={visible}
@@ -48,50 +51,88 @@ export const ReminderModal: React.FC<ReminderModalProps> = ({
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        <View style={styles.sheet}>
+        <View
+          style={[
+            styles.sheet,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.surfaceBorder,
+            },
+          ]}
+        >
           {/* Header */}
           <View style={styles.header}>
             <View style={styles.titleRow}>
-              <View style={styles.iconCircle}>
-                <Bell size={20} color={Colors.primary} />
+              <View style={[styles.iconCircle, { backgroundColor: colors.cardBadgeBg }]}>
+                <Bell size={20} color={colors.primary} />
               </View>
-              <Text style={styles.title}>HYDRATION REMINDERS</Text>
+              <Text style={[styles.title, { color: colors.textPrimary }]}>
+                HYDRATION REMINDERS
+              </Text>
             </View>
             <TouchableOpacity onPress={onClose} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-              <X size={22} color={Colors.textSecondary} />
+              <X size={22} color={colors.textSecondary} />
             </TouchableOpacity>
           </View>
 
           {/* Master Toggle */}
-          <View style={styles.toggleCard}>
+          <View
+            style={[
+              styles.toggleCard,
+              {
+                backgroundColor: colors.background,
+                borderColor: colors.surfaceBorder,
+              },
+            ]}
+          >
             <View style={styles.toggleInfo}>
-              <Text style={styles.toggleTitle}>Smart Reminders</Text>
-              <Text style={styles.toggleDesc}>Receive periodic nudges to drink water</Text>
+              <Text style={[styles.toggleTitle, { color: colors.textPrimary }]}>
+                Smart Reminders
+              </Text>
+              <Text style={[styles.toggleDesc, { color: colors.textSecondary }]}>
+                Receive periodic nudges to drink water
+              </Text>
             </View>
             <Switch
               value={enabled}
               onValueChange={setEnabled}
-              trackColor={{ false: '#262626', true: Colors.primaryDark }}
-              thumbColor={enabled ? Colors.primary : '#888'}
+              trackColor={{ false: '#262626', true: colors.primaryDark }}
+              thumbColor={enabled ? colors.primary : '#888'}
             />
           </View>
 
           {enabled && (
             <View style={styles.intervalSection}>
-              <Text style={styles.sectionHeading}>REMINDER FREQUENCY</Text>
+              <Text style={[styles.sectionHeading, { color: colors.textSecondary }]}>
+                REMINDER FREQUENCY
+              </Text>
               <View style={styles.optionsGrid}>
                 {INTERVAL_OPTIONS.map((opt) => {
                   const selected = intervalMinutes === opt.value;
                   return (
                     <TouchableOpacity
                       key={opt.value}
-                      style={[styles.optionCard, selected && styles.optionSelected]}
+                      style={[
+                        styles.optionCard,
+                        {
+                          backgroundColor: selected ? colors.cardBadgeBg : colors.background,
+                          borderColor: selected ? colors.primary : colors.surfaceBorder,
+                        },
+                      ]}
                       onPress={() => setIntervalMinutes(opt.value)}
                     >
-                      <Text style={[styles.optionText, selected && styles.optionTextSelected]}>
+                      <Text
+                        style={[
+                          styles.optionText,
+                          {
+                            color: selected ? colors.textPrimary : colors.textSecondary,
+                            fontWeight: selected ? '700' : '600',
+                          },
+                        ]}
+                      >
                         {opt.label}
                       </Text>
-                      {selected && <Check size={16} color={Colors.primary} />}
+                      {selected && <Check size={16} color={colors.primary} />}
                     </TouchableOpacity>
                   );
                 })}
@@ -101,16 +142,29 @@ export const ReminderModal: React.FC<ReminderModalProps> = ({
 
           {/* Test Notification Button */}
           <TouchableOpacity
-            style={styles.testBtn}
+            style={[
+              styles.testBtn,
+              {
+                backgroundColor: colors.cardBadgeBg,
+                borderColor: colors.cardBadgeBorder,
+              },
+            ]}
             onPress={onTestNotification}
           >
-            <Zap size={16} color={Colors.accent} />
-            <Text style={styles.testBtnText}>Send Test Notification</Text>
+            <Zap size={16} color={colors.accent} />
+            <Text style={[styles.testBtnText, { color: colors.accent }]}>
+              Send Test Notification
+            </Text>
           </TouchableOpacity>
 
           {/* Save Action */}
-          <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-            <Text style={styles.saveBtnText}>Save Preferences</Text>
+          <TouchableOpacity
+            style={[styles.saveBtn, { backgroundColor: colors.primary }]}
+            onPress={handleSave}
+          >
+            <Text style={[styles.saveBtnText, { color: saveBtnTextColor }]}>
+              Save Preferences
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -125,13 +179,11 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   sheet: {
-    backgroundColor: Colors.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
     borderWidth: 1,
     borderBottomWidth: 0,
-    borderColor: Colors.surfaceBorder,
   },
   header: {
     flexDirection: 'row',
@@ -148,7 +200,6 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: 'rgba(255, 30, 68, 0.15)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -156,17 +207,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '800',
     letterSpacing: 2,
-    color: Colors.textPrimary,
   },
   toggleCard: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.background,
     padding: 16,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: Colors.surfaceBorder,
     marginBottom: 20,
   },
   toggleInfo: {
@@ -176,12 +224,10 @@ const styles = StyleSheet.create({
   toggleTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.textPrimary,
     marginBottom: 2,
   },
   toggleDesc: {
     fontSize: 12,
-    color: Colors.textSecondary,
   },
   intervalSection: {
     marginBottom: 20,
@@ -190,7 +236,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     letterSpacing: 1.5,
-    color: Colors.textSecondary,
     marginBottom: 10,
   },
   optionsGrid: {
@@ -200,25 +245,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: Colors.background,
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: Colors.surfaceBorder,
-  },
-  optionSelected: {
-    borderColor: Colors.primary,
-    backgroundColor: 'rgba(255, 30, 68, 0.08)',
   },
   optionText: {
     fontSize: 14,
-    fontWeight: '600',
-    color: Colors.textSecondary,
-  },
-  optionTextSelected: {
-    color: Colors.textPrimary,
-    fontWeight: '700',
   },
   testBtn: {
     flexDirection: 'row',
@@ -227,26 +260,21 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 12,
     borderRadius: 12,
-    backgroundColor: 'rgba(255, 77, 109, 0.1)',
     borderWidth: 1,
-    borderColor: 'rgba(255, 77, 109, 0.3)',
     marginBottom: 12,
   },
   testBtnText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.accent,
   },
   saveBtn: {
-    backgroundColor: Colors.primary,
     paddingVertical: 16,
     borderRadius: 14,
     alignItems: 'center',
   },
   saveBtnText: {
     fontSize: 15,
-    fontWeight: '700',
-    color: '#FFF',
+    fontWeight: '800',
     letterSpacing: 1,
   },
 });

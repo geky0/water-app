@@ -13,20 +13,24 @@ import {
   Alert,
 } from 'react-native';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
-import { Bell, Settings, Target, Flame, RotateCcw } from 'lucide-react-native';
+import { Bell, Target, Flame, RotateCcw, Palette, Sparkles, Download } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 
-import { Colors } from './src/theme/colors';
 import { DrinkLog, ReminderConfig, UserStats } from './src/types';
 import { StorageService } from './src/services/storage';
 import { NotificationService } from './src/services/notifications';
+import { UpdateService, UpdateInfo } from './src/services/update';
+import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
 
 import { HydrationRing } from './src/components/HydrationRing';
 import { QuickAddButtons } from './src/components/QuickAddButtons';
 import { TodayLog } from './src/components/TodayLog';
 import { ReminderModal } from './src/components/ReminderModal';
+import { ThemeModal } from './src/components/ThemeModal';
 
-export default function App() {
+function MainScreen() {
+  const { colors, themeId } = useTheme();
+
   const [logs, setLogs] = useState<DrinkLog[]>([]);
   const [stats, setStats] = useState<UserStats>({
     dailyGoal: 2500,
@@ -42,8 +46,10 @@ export default function App() {
 
   const [reminderModalVisible, setReminderModalVisible] = useState(false);
   const [goalModalVisible, setGoalModalVisible] = useState(false);
+  const [themeModalVisible, setThemeModalVisible] = useState(false);
   const [customGoalInput, setCustomGoalInput] = useState('2500');
   const [refreshing, setRefreshing] = useState(false);
+  const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
 
   // Load initial data & configure notifications
   const loadData = useCallback(async () => {
@@ -65,11 +71,29 @@ export default function App() {
 
   useEffect(() => {
     loadData();
+
+    // Auto-check for updates on app startup
+    (async () => {
+      try {
+        const info = await UpdateService.checkForUpdate();
+        if (info && info.hasUpdate) {
+          setUpdateInfo(info);
+        }
+      } catch (e) {
+        console.error('Update check failed:', e);
+      }
+    })();
   }, [loadData]);
 
   const onRefresh = async () => {
     setRefreshing(true);
     await loadData();
+    try {
+      const info = await UpdateService.checkForUpdate();
+      if (info && info.hasUpdate) {
+        setUpdateInfo(info);
+      }
+    } catch {}
     setRefreshing(false);
   };
 
@@ -79,7 +103,6 @@ export default function App() {
     const updated = await StorageService.addLog(amount);
     setLogs(updated);
 
-    // If goal reached for the first time today, trigger haptic celebration
     if (totalDrankToday < stats.dailyGoal && totalDrankToday + amount >= stats.dailyGoal) {
       try {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -138,45 +161,115 @@ export default function App() {
     );
   };
 
+  const saveBtnTextColor = themeId === 'monochrome' ? '#000000' : '#FFFFFF';
+
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <ExpoStatusBar style="light" />
-      <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background} />
 
       {/* App Header */}
-      <View style={styles.topBar}>
+      <View
+        style={[
+          styles.topBar,
+          {
+            backgroundColor: colors.background,
+            borderBottomColor: colors.surfaceBorder,
+          },
+        ]}
+      >
         <View>
-          <Text style={styles.brandTitle}>
-            HYDRO<Text style={styles.brandTitleRed}>DARK</Text>
+          <Text style={[styles.brandTitle, { color: colors.textPrimary }]}>
+            HYDRO
+            <Text style={{ color: colors.primary }}>DARK</Text>
           </Text>
-          <Text style={styles.brandSubtitle}>Precision Hydration</Text>
+          <Text style={[styles.brandSubtitle, { color: colors.textMuted }]}>
+            Precision Hydration
+          </Text>
         </View>
 
         <View style={styles.headerButtons}>
-          <TouchableOpacity
-            style={styles.circleActionBtn}
-            onPress={() => setGoalModalVisible(true)}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          >
-            <Target size={18} color={Colors.textSecondary} />
-          </TouchableOpacity>
-
+          {/* Appearance / Theme Selector */}
           <TouchableOpacity
             style={[
               styles.circleActionBtn,
-              reminderConfig.enabled && styles.activeReminderBtn,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.surfaceBorder,
+              },
+            ]}
+            onPress={() => setThemeModalVisible(true)}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Palette size={18} color={colors.textSecondary} />
+          </TouchableOpacity>
+
+          {/* Daily Target Goal */}
+          <TouchableOpacity
+            style={[
+              styles.circleActionBtn,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.surfaceBorder,
+              },
+            ]}
+            onPress={() => setGoalModalVisible(true)}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Target size={18} color={colors.textSecondary} />
+          </TouchableOpacity>
+
+          {/* Smart Reminders */}
+          <TouchableOpacity
+            style={[
+              styles.circleActionBtn,
+              {
+                backgroundColor: colors.surface,
+                borderColor: reminderConfig.enabled ? colors.cardBadgeBorder : colors.surfaceBorder,
+              },
+              reminderConfig.enabled && {
+                backgroundColor: colors.cardBadgeBg,
+              },
             ]}
             onPress={() => setReminderModalVisible(true)}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
             <Bell
               size={18}
-              color={reminderConfig.enabled ? Colors.primary : Colors.textSecondary}
+              color={reminderConfig.enabled ? colors.primary : colors.textSecondary}
             />
-            {reminderConfig.enabled && <View style={styles.activeDot} />}
+            {reminderConfig.enabled && (
+              <View style={[styles.activeDot, { backgroundColor: colors.primary }]} />
+            )}
           </TouchableOpacity>
         </View>
       </View>
+
+      {/* In-App Auto Update Banner if new release available */}
+      {updateInfo?.hasUpdate && (
+        <TouchableOpacity
+          style={[
+            styles.updateBanner,
+            {
+              backgroundColor: colors.cardBadgeBg,
+              borderColor: colors.primary,
+            },
+          ]}
+          onPress={() => setThemeModalVisible(true)}
+          activeOpacity={0.85}
+        >
+          <View style={styles.updateBannerLeft}>
+            <Sparkles size={16} color={colors.primary} />
+            <Text style={[styles.updateBannerText, { color: colors.textPrimary }]}>
+              New Version Available: v{updateInfo.latestVersion}
+            </Text>
+          </View>
+          <View style={[styles.updateBannerBadge, { backgroundColor: colors.primary }]}>
+            <Download size={12} color="#000000" />
+            <Text style={styles.updateBannerBadgeText}>UPDATE</Text>
+          </View>
+        </TouchableOpacity>
+      )}
 
       <ScrollView
         style={styles.scrollView}
@@ -186,31 +279,59 @@ export default function App() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={Colors.primary}
-            colors={[Colors.primary]}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
           />
         }
       >
         {/* Streak & Status Banner */}
         <View style={styles.statusRow}>
-          <View style={styles.statusCard}>
-            <Flame size={18} color={Colors.primary} />
-            <Text style={styles.statusLabel}>STREAK</Text>
-            <Text style={styles.statusValue}>{stats.streakDays} Day</Text>
+          <View
+            style={[
+              styles.statusCard,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.surfaceBorder,
+              },
+            ]}
+          >
+            <Flame size={18} color={colors.primary} />
+            <Text style={[styles.statusLabel, { color: colors.textMuted }]}>STREAK</Text>
+            <Text style={[styles.statusValue, { color: colors.textPrimary }]}>
+              {stats.streakDays} Day
+            </Text>
           </View>
-          <View style={styles.statusCard}>
-            <Target size={18} color={Colors.accent} />
-            <Text style={styles.statusLabel}>TARGET</Text>
-            <Text style={styles.statusValue}>{stats.dailyGoal} ml</Text>
+
+          <View
+            style={[
+              styles.statusCard,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.surfaceBorder,
+              },
+            ]}
+          >
+            <Target size={18} color={colors.accent} />
+            <Text style={[styles.statusLabel, { color: colors.textMuted }]}>TARGET</Text>
+            <Text style={[styles.statusValue, { color: colors.textPrimary }]}>
+              {stats.dailyGoal} ml
+            </Text>
           </View>
+
           <TouchableOpacity
-            style={styles.statusCard}
+            style={[
+              styles.statusCard,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.surfaceBorder,
+              },
+            ]}
             onPress={handleResetDay}
             activeOpacity={0.7}
           >
-            <RotateCcw size={18} color={Colors.textMuted} />
-            <Text style={styles.statusLabel}>ACTION</Text>
-            <Text style={[styles.statusValue, { color: Colors.textMuted }]}>Reset</Text>
+            <RotateCcw size={18} color={colors.textMuted} />
+            <Text style={[styles.statusLabel, { color: colors.textMuted }]}>ACTION</Text>
+            <Text style={[styles.statusValue, { color: colors.textMuted }]}>Reset</Text>
           </TouchableOpacity>
         </View>
 
@@ -233,6 +354,12 @@ export default function App() {
         onTestNotification={handleTestNotification}
       />
 
+      {/* Appearance & Themes Modal */}
+      <ThemeModal
+        visible={themeModalVisible}
+        onClose={() => setThemeModalVisible(false)}
+      />
+
       {/* Goal Edit Modal */}
       <Modal
         visible={goalModalVisible}
@@ -241,33 +368,57 @@ export default function App() {
         onRequestClose={() => setGoalModalVisible(false)}
       >
         <View style={styles.goalModalOverlay}>
-          <View style={styles.goalModalCard}>
-            <Text style={styles.goalModalTitle}>DAILY TARGET</Text>
-            <Text style={styles.goalModalSubtitle}>Set your daily water consumption goal</Text>
+          <View
+            style={[
+              styles.goalModalCard,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.surfaceBorder,
+              },
+            ]}
+          >
+            <Text style={[styles.goalModalTitle, { color: colors.primary }]}>
+              DAILY TARGET
+            </Text>
+            <Text style={[styles.goalModalSubtitle, { color: colors.textSecondary }]}>
+              Set your daily water consumption goal
+            </Text>
 
-            <View style={styles.goalInputRow}>
+            <View
+              style={[
+                styles.goalInputRow,
+                {
+                  backgroundColor: colors.background,
+                  borderColor: colors.surfaceBorder,
+                },
+              ]}
+            >
               <TextInput
-                style={styles.goalInput}
+                style={[styles.goalInput, { color: colors.textPrimary }]}
                 keyboardType="numeric"
                 value={customGoalInput}
                 onChangeText={setCustomGoalInput}
                 autoFocus
               />
-              <Text style={styles.goalUnit}>ml</Text>
+              <Text style={[styles.goalUnit, { color: colors.textSecondary }]}>ml</Text>
             </View>
 
             <View style={styles.modalButtons}>
               <TouchableOpacity
-                style={styles.cancelModalBtn}
+                style={[styles.cancelModalBtn, { backgroundColor: colors.surfaceLight }]}
                 onPress={() => setGoalModalVisible(false)}
               >
-                <Text style={styles.cancelModalText}>Cancel</Text>
+                <Text style={[styles.cancelModalText, { color: colors.textSecondary }]}>
+                  Cancel
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.saveModalBtn}
+                style={[styles.saveModalBtn, { backgroundColor: colors.primary }]}
                 onPress={handleSaveGoal}
               >
-                <Text style={styles.saveModalText}>Save Goal</Text>
+                <Text style={[styles.saveModalText, { color: saveBtnTextColor }]}>
+                  Save Goal
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -277,10 +428,17 @@ export default function App() {
   );
 }
 
+export default function App() {
+  return (
+    <ThemeProvider>
+      <MainScreen />
+    </ThemeProvider>
+  );
+}
+
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   topBar: {
     flexDirection: 'row',
@@ -290,22 +448,15 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 14,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.surfaceBorder,
-    backgroundColor: Colors.background,
   },
   brandTitle: {
     fontSize: 20,
     fontWeight: '900',
     letterSpacing: 2,
-    color: Colors.textPrimary,
-  },
-  brandTitleRed: {
-    color: Colors.primary,
   },
   brandSubtitle: {
     fontSize: 11,
     letterSpacing: 1.5,
-    color: Colors.textMuted,
     marginTop: 2,
     textTransform: 'uppercase',
   },
@@ -318,15 +469,9 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: Colors.surfaceBorder,
-  },
-  activeReminderBtn: {
-    borderColor: 'rgba(255, 30, 68, 0.4)',
-    backgroundColor: 'rgba(255, 30, 68, 0.08)',
   },
   activeDot: {
     position: 'absolute',
@@ -335,7 +480,42 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: Colors.primary,
+  },
+  updateBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginHorizontal: 16,
+    marginTop: 10,
+    marginBottom: 4,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  updateBannerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flex: 1,
+  },
+  updateBannerText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  updateBannerBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  updateBannerBadgeText: {
+    color: '#000000',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.5,
   },
   scrollView: {
     flex: 1,
@@ -352,25 +532,21 @@ const styles = StyleSheet.create({
   },
   statusCard: {
     flex: 1,
-    backgroundColor: Colors.surface,
     paddingVertical: 12,
     paddingHorizontal: 8,
     borderRadius: 14,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.surfaceBorder,
   },
   statusLabel: {
     fontSize: 10,
     fontWeight: '700',
-    color: Colors.textMuted,
     letterSpacing: 1,
     marginTop: 4,
   },
   statusValue: {
     fontSize: 13,
     fontWeight: '800',
-    color: Colors.textPrimary,
     marginTop: 2,
   },
   goalModalOverlay: {
@@ -383,32 +559,26 @@ const styles = StyleSheet.create({
   goalModalCard: {
     width: '100%',
     maxWidth: 340,
-    backgroundColor: Colors.surface,
     borderRadius: 20,
     padding: 24,
     borderWidth: 1,
-    borderColor: Colors.surfaceBorder,
     alignItems: 'center',
   },
   goalModalTitle: {
     fontSize: 16,
     fontWeight: '800',
     letterSpacing: 2,
-    color: Colors.primary,
     marginBottom: 4,
   },
   goalModalSubtitle: {
     fontSize: 13,
-    color: Colors.textSecondary,
     marginBottom: 20,
   },
   goalInputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: Colors.surfaceBorder,
     paddingHorizontal: 16,
     width: '100%',
     marginBottom: 24,
@@ -418,12 +588,10 @@ const styles = StyleSheet.create({
     height: 52,
     fontSize: 24,
     fontWeight: '700',
-    color: Colors.textPrimary,
   },
   goalUnit: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.textSecondary,
   },
   modalButtons: {
     flexDirection: 'row',
@@ -434,11 +602,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 14,
     borderRadius: 12,
-    backgroundColor: Colors.surfaceLight,
     alignItems: 'center',
   },
   cancelModalText: {
-    color: Colors.textSecondary,
     fontWeight: '600',
     fontSize: 14,
   },
@@ -446,13 +612,10 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 14,
     borderRadius: 12,
-    backgroundColor: Colors.primary,
     alignItems: 'center',
   },
   saveModalText: {
-    color: '#FFF',
-    fontWeight: '700',
+    fontWeight: '800',
     fontSize: 14,
   },
 });
-
