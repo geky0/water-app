@@ -1,6 +1,6 @@
 {
-  "name": "HydroDark",
-  "identifier": "com.damurxy.hydrodark.source",
+  "name": "DaMurxy's App Repo",
+  "identifier": "com.damurxy.apps.source",
   "website": "https://github.com/geky0/water-app",
   "apps": [
     {
@@ -15,6 +15,19 @@
       "iconURL": "https://raw.githubusercontent.com/geky0/water-app/main/assets/icon-stealth.png",
       "tintColor": "FF2A4D",
       "size": 17618640
+    },
+    {
+      "name": "Ksign",
+      "bundleIdentifier": "nya.asami.ksign",
+      "developerName": "Nagata Asami",
+      "version": "1.6",
+      "versionDate": "2026-05-25",
+      "versionDescription": "Optimization for iOS 26, bulk installation support for multiple apps, custom injection path, tweak support, and bug fixes.",
+      "downloadURL": "https://github.com/Nyasami/Ksign/releases/download/v1.6/Ksign.ipa",
+      "localizedDescription": "On-device IPA codesigning and sideloading tool for iOS. Sign and install IPAs directly on your iPhone without needing a computer.",
+      "iconURL": "https://raw.githubusercontent.com/Nyasami/Ksign/v1.5/Ksign/Resources/Assets.xcassets/AppIcon.appiconset/Ksign-default.png",
+      "tintColor": "3c94fc",
+      "size": 16394645
     }
   ],
   "news": []

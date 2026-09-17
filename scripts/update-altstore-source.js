@@ -11,12 +11,15 @@ files.forEach(file => {
   const filePath = path.join(__dirname, '..', file);
   if (fs.existsSync(filePath)) {
     const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    if (data.apps && data.apps[0]) {
-      data.apps[0].version = version;
-      data.apps[0].versionDate = versionDate;
-      data.apps[0].downloadURL = `https://github.com/geky0/water-app/releases/download/v${version}/HydroDark.ipa`;
-      fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + '\n');
-      console.log(`Updated ${file} to v${version} (${versionDate})`);
+    if (data.apps) {
+      const hydroDark = data.apps.find(a => a.bundleIdentifier === 'com.damurxy.hydrodark') || data.apps[0];
+      if (hydroDark) {
+        hydroDark.version = version;
+        hydroDark.versionDate = versionDate;
+        hydroDark.downloadURL = `https://github.com/geky0/water-app/releases/download/v${version}/HydroDark.ipa`;
+        fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + '\n');
+        console.log(`Updated HydroDark in ${file} to v${version} (${versionDate})`);
+      }
     }
   }
 });
