@@ -31,19 +31,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Patch ExpoModulesJSI RuntimeScheduler
-        run: |
-          python3 -c "
-          p = 'node_modules/expo-modules-jsi/apple/Sources/ExpoModulesJSI-Cxx/include/RuntimeScheduler.h'
-          with open(p, 'r') as f:
-              c = f.read()
-          c = c.replace('SWIFT_RETURNS_RETAINED ', '')
-          c = c.replace('} SWIFT_SHARED_REFERENCE(retainRuntimeScheduler, releaseRuntimeScheduler);', '} SWIFT_IMMORTAL_REFERENCE;')
-          with open(p, 'w') as f:
-              f.write(c)
-          "
-          echo "=== Patched RuntimeScheduler.h ==="
-          tail -n 30 node_modules/expo-modules-jsi/apple/Sources/ExpoModulesJSI-Cxx/include/RuntimeScheduler.h
+      - name: Patch ExpoModulesJSI for Swift 6.2 / Xcode 26.2
+        run: node scripts/patch-expo-modules-jsi.js
 
       - name: Prebuild Native iOS Project
         run: npx expo prebuild --platform ios --clean
