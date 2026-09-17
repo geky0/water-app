@@ -15,6 +15,8 @@ export interface UpdateInfo {
 
 const GITHUB_REPO = 'geky0/water-app';
 export const CURRENT_VERSION = appConfig.expo.version || '1.0.0';
+export const ALTSTORE_SOURCE_RAW_URL = `https://raw.githubusercontent.com/${GITHUB_REPO}/main/altstore.json`;
+export const ALTSTORE_ADD_SOURCE_URL = `altstore://source?url=${encodeURIComponent(ALTSTORE_SOURCE_RAW_URL)}`;
 
 export const UpdateService = {
   async checkForUpdate(): Promise<UpdateInfo> {
@@ -107,6 +109,19 @@ export const UpdateService = {
       await Linking.openURL(`https://github.com/${GITHUB_REPO}/releases`);
     } catch (e) {
       console.error('Error opening releases page:', e);
+    }
+  },
+
+  async openAltStoreSource(): Promise<void> {
+    try {
+      const canOpen = await Linking.canOpenURL('altstore://');
+      if (canOpen) {
+        await Linking.openURL(ALTSTORE_ADD_SOURCE_URL);
+      } else {
+        await Linking.openURL(ALTSTORE_SOURCE_RAW_URL);
+      }
+    } catch (e) {
+      await Linking.openURL(ALTSTORE_SOURCE_RAW_URL);
     }
   },
 };

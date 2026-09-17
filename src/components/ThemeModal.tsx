@@ -456,6 +456,23 @@ export const ThemeModal: React.FC<ThemeModalProps> = ({ visible, onClose }) => {
                 {/* Always-accessible Quick Links to download newest version */}
                 <View style={styles.updateActionButtons}>
                   <TouchableOpacity
+                    style={[
+                      styles.sourceBtn,
+                      {
+                        borderColor: colors.primary,
+                        backgroundColor: colors.cardBadgeBg,
+                      },
+                    ]}
+                    onPress={() => UpdateService.openAltStoreSource()}
+                    activeOpacity={0.8}
+                  >
+                    <Sparkles size={14} color={colors.primary} />
+                    <Text style={[styles.sourceBtnText, { color: colors.primary }]}>
+                      + Add AltStore Source (Auto-Updates)
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
                     style={[styles.downloadIpaBtn, { backgroundColor: colors.primary }]}
                     onPress={() => UpdateService.openUpdate(updateInfo || {
                       hasUpdate: false,
@@ -801,6 +818,20 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     gap: 8,
     marginTop: 4,
+  },
+  sourceBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    borderRadius: 10,
+    borderWidth: 1.5,
+  },
+  sourceBtnText: {
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 0.5,
   },
   downloadIpaBtn: {
     flexDirection: 'row',
