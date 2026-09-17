@@ -13,10 +13,11 @@ jobs:
     runs-on: macos-15
 
     steps:
-      - name: Select Xcode 16.2
+      - name: Select Xcode 26.2
         run: |
-          sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer || sudo xcode-select -s /Applications/Xcode_16.1.app/Contents/Developer || sudo xcode-select -s /Applications/Xcode_16.0.app/Contents/Developer
+          sudo xcode-select -s /Applications/Xcode_26.2.app/Contents/Developer || sudo xcode-select -s /Applications/Xcode_26.1.1.app/Contents/Developer || sudo xcode-select -s /Applications/Xcode_26.0.1.app/Contents/Developer || sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
           xcodebuild -version
+          swift --version
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,24 +30,6 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-
-      - name: Patch ExpoModulesJSI Swift tools version and syntax
-        run: |
-          python3 -c "
-          p = 'node_modules/expo-modules-jsi/apple/Package.swift'
-          with open(p, 'r') as f:
-              content = f.read()
-          content = content.replace('swift-tools-version: 6.2', 'swift-tools-version: 6.0')
-          content = content.replace('targets: [\"ExpoModulesJSI\"],', 'targets: [\"ExpoModulesJSI\"]')
-          content = content.replace('\"ExpoModulesJSI-Cxx\"],', '\"ExpoModulesJSI-Cxx\"]')
-          content = content.replace('\"dynamic_lookup\",', '\"dynamic_lookup\"')
-          content = content.replace('\"include/Public\"),', '\"include/Public\")')
-          content = content.replace('path: \"Tests\",', 'path: \"Tests\"')
-          content = content.replace('path: \"Benchmarks\",', 'path: \"Benchmarks\"')
-          with open(p, 'w') as f:
-              f.write(content)
-          "
-          head -n 25 node_modules/expo-modules-jsi/apple/Package.swift
 
       - name: Prebuild Native iOS Project
         run: npx expo prebuild --platform ios --clean
