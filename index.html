@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xavi's Repo | iOS Sideload Source</title>
+  <link rel="icon" type="image/png" href="assets/xavi-repo-icon.png">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: #08080a; color: #f0f0f5; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
+    .container { max-width: 600px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 28px; }
+    .pfp-wrapper { width: 130px; height: 130px; border-radius: 32px; padding: 4px; background: linear-gradient(135deg, #ff2a4d, #3c94fc); box-shadow: 0 10px 40px rgba(255, 42, 77, 0.35); }
+    .pfp { width: 100%; height: 100%; border-radius: 28px; object-fit: cover; background: #000; }
+    .header { text-align: center; }
+    .title { font-size: 28px; font-weight: 900; letter-spacing: 0.5px; background: linear-gradient(135deg, #ffffff, #a1a1aa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .subtitle { color: #82828e; font-size: 14px; margin-top: 6px; }
+    .btn-group { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+    .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 15px 20px; border-radius: 16px; font-weight: 800; font-size: 15px; text-decoration: none; transition: transform 0.15s ease, box-shadow 0.15s ease; }
+    .btn:active { transform: scale(0.98); }
+    .btn-ksign { background: linear-gradient(135deg, #3c94fc, #1e60d0); color: #fff; box-shadow: 0 8px 25px rgba(60, 148, 252, 0.35); }
+    .btn-altstore { background: #16161a; color: #ff2a4d; border: 1.5px solid rgba(255, 42, 77, 0.3); }
+    .section-title { width: 100%; font-size: 12px; font-weight: 800; letter-spacing: 1.5px; color: #62626e; text-transform: uppercase; margin-top: 10px; }
+    .app-card { width: 100%; background: #121216; border: 1px solid #22222a; border-radius: 20px; padding: 18px; display: flex; align-items: center; gap: 16px; }
+    .app-icon { width: 62px; height: 62px; border-radius: 14px; object-fit: cover; }
+    .app-info { flex: 1; min-width: 0; }
+    .app-name { font-size: 17px; font-weight: 800; color: #fff; }
+    .app-desc { font-size: 12px; color: #8e8e98; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .app-meta { font-size: 11px; color: #ff2a4d; font-weight: 700; margin-top: 4px; }
+    .get-btn { background: rgba(255, 255, 255, 0.08); color: #fff; text-decoration: none; padding: 8px 16px; border-radius: 20px; font-weight: 800; font-size: 13px; transition: background 0.15s; }
+    .get-btn:hover { background: #ff2a4d; color: #000; }
+    .copy-box { width: 100%; background: #101014; border: 1px dashed #2c2c36; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px; }
+    .copy-label { font-size: 11px; font-weight: 700; color: #72727e; text-transform: uppercase; letter-spacing: 1px; }
+    .copy-url { font-family: monospace; font-size: 12px; color: #3c94fc; word-break: break-all; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="pfp-wrapper">
+      <img class="pfp" src="assets/xavi-repo-icon.png" alt="Xavi's Repo">
+    </div>
+
+    <div class="header">
+      <h1 class="title">Xavi's Repo</h1>
+      <p class="subtitle">Official Sideload Repository for KSign & AltStore</p>
+    </div>
+
+    <div class="btn-group">
+      <a class="btn btn-ksign" href="ksign://source/https://geky0.github.io/water-app/repo.json">
+        ⚡ Add to KSign
+      </a>
+      <a class="btn btn-altstore" href="altstore://source?url=https%3A%2F%2Fgeky0.github.io%2Fwater-app%2Faltstore.json">
+        📲 Add to AltStore / SideStore
+      </a>
+    </div>
+
+    <div class="copy-box">
+      <span class="copy-label">Direct Repo URL (Copy into KSign):</span>
+      <span class="copy-url">https://geky0.github.io/water-app/repo.json</span>
+    </div>
+
+    <div class="section-title">Available Apps</div>
+
+    <!-- HydroDark App -->
+    <div class="app-card">
+      <img class="app-icon" src="assets/icon.png" alt="HydroDark">
+      <div class="app-info">
+        <div class="app-name">HydroDark</div>
+        <div class="app-desc">Dark OLED Hydration Tracker & Custom Icons</div>
+        <div class="app-meta">v1.1.0 • 17.6 MB</div>
+      </div>
+      <a class="get-btn" href="https://github.com/geky0/water-app/releases/download/v1.1.0/HydroDark.ipa">GET</a>
+    </div>
+
+    <!-- Ksign App -->
+    <div class="app-card">
+      <img class="app-icon" src="https://raw.githubusercontent.com/Nyasami/Ksign/v1.5/Ksign/Resources/Assets.xcassets/AppIcon.appiconset/Ksign-default.png" alt="Ksign">
+      <div class="app-info">
+        <div class="app-name">Ksign</div>
+        <div class="app-desc">On-Device IPA Codesigning & Installer</div>
+        <div class="app-meta" style="color: #3c94fc;">v1.6 • 16.4 MB</div>
+      </div>
+      <a class="get-btn" href="https://github.com/Nyasami/Ksign/releases/download/v1.6/Ksign.ipa">GET</a>
+    </div>
+  </div>
+</body>
+</html>

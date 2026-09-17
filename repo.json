@@ -1,37 +1,64 @@
 {
-  "name": "DaMurxy's App Repo",
-  "identifier": "com.damurxy.apps.source",
-  "subtitle": "HydroDark and iOS Apps",
-  "description": "Personal sideloading source for HydroDark and utilities",
-  "iconURL": "https://raw.githubusercontent.com/geky0/water-app/main/assets/icon-stealth.png",
-  "website": "https://github.com/geky0/water-app",
+  "name": "Xavi's Repo",
+  "identifier": "com.xavi.repo",
+  "subtitle": "HydroDark & iOS Apps",
+  "description": "Official sideload repository for HydroDark and iOS utilities",
+  "iconURL": "https://raw.githubusercontent.com/geky0/water-app/main/assets/xavi-repo-icon.png",
+  "website": "https://geky0.github.io/water-app/",
   "tintColor": "FF2A4D",
+  "featuredApps": [
+    "com.damurxy.hydrodark"
+  ],
   "apps": [
     {
       "name": "HydroDark",
       "bundleIdentifier": "com.damurxy.hydrodark",
-      "developerName": "HydroDark",
-      "version": "1.1.0",
-      "versionDate": "2026-09-17",
-      "versionDescription": "Added Stealth Monochrome (all black & gray) theme, multiple selectable app icons, hydration ring center symbols, and auto-update links.",
-      "downloadURL": "https://github.com/geky0/water-app/releases/download/v1.1.0/HydroDark.ipa",
-      "localizedDescription": "HydroDark is an OLED dark-aesthetic hydration tracking app with customizable app launcher icons and hydration goals.",
-      "iconURL": "https://raw.githubusercontent.com/geky0/water-app/main/assets/icon-stealth.png",
+      "developerName": "Xavi",
+      "subtitle": "Dark Aesthetic Hydration Tracker",
+      "localizedDescription": "HydroDark is a sleek dark-aesthetic hydration tracking app with customizable OLED themes, multiple app icons, and hydration goals.",
+      "iconURL": "https://raw.githubusercontent.com/geky0/water-app/main/assets/icon.png",
       "tintColor": "FF2A4D",
-      "size": 17618640
+      "category": "health",
+      "version": "1.1.0",
+      "versionDate": "2026-09-17T00:00:00Z",
+      "versionDescription": "Added Stealth Monochrome (all black & gray) theme, multiple selectable launcher icons, and in-app update checker.",
+      "downloadURL": "https://github.com/geky0/water-app/releases/download/v1.1.0/HydroDark.ipa",
+      "size": 17618640,
+      "versions": [
+        {
+          "version": "1.1.0",
+          "date": "2026-09-17T00:00:00Z",
+          "size": 17618640,
+          "downloadURL": "https://github.com/geky0/water-app/releases/download/v1.1.0/HydroDark.ipa",
+          "localizedDescription": "Added Stealth Monochrome (all black & gray) theme, multiple selectable launcher icons, and in-app update checker.",
+          "minOSVersion": "15.0"
+        }
+      ]
     },
     {
       "name": "Ksign",
       "bundleIdentifier": "nya.asami.ksign",
       "developerName": "Nagata Asami",
-      "version": "1.6",
-      "versionDate": "2026-05-25",
-      "versionDescription": "Optimization for iOS 26, bulk installation support for multiple apps, custom injection path, tweak support, and bug fixes.",
-      "downloadURL": "https://github.com/Nyasami/Ksign/releases/download/v1.6/Ksign.ipa",
+      "subtitle": "On-Device IPA Signer",
       "localizedDescription": "On-device IPA codesigning and sideloading tool for iOS. Sign and install IPAs directly on your iPhone without needing a computer.",
       "iconURL": "https://raw.githubusercontent.com/Nyasami/Ksign/v1.5/Ksign/Resources/Assets.xcassets/AppIcon.appiconset/Ksign-default.png",
       "tintColor": "3c94fc",
-      "size": 16394645
+      "category": "utilities",
+      "version": "1.6",
+      "versionDate": "2026-05-25T21:17:37+07:00",
+      "versionDescription": "Optimization for iOS 26, bulk installation support for multiple apps, custom injection path, tweak support, and bug fixes.",
+      "downloadURL": "https://github.com/Nyasami/Ksign/releases/download/v1.6/Ksign.ipa",
+      "size": 16394645,
+      "versions": [
+        {
+          "version": "1.6",
+          "date": "2026-05-25T21:17:37+07:00",
+          "size": 16394645,
+          "downloadURL": "https://github.com/Nyasami/Ksign/releases/download/v1.6/Ksign.ipa",
+          "localizedDescription": "Optimization for iOS 26, bulk installation support for multiple apps, custom injection path, tweak support, and bug fixes.",
+          "minOSVersion": "16.0"
+        }
+      ]
     }
   ],
   "news": []
